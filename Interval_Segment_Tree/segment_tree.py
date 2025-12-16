@@ -37,6 +37,26 @@ class SegmentTree:
         node.right_child = self._build(points, mid + 1, r)
         return node
 
+    def delete(self, interval):
+        """Remove an interval from the segment tree."""
+        self._delete(self.root, interval)
+
+    def _delete(self, node, interval):
+        low, high, _ = interval
+
+        # Interval fully covers this node → remove if present
+        if low <= node.left and high >= node.right:
+            if interval in node.intervals:
+                node.intervals.remove(interval)
+            return
+
+        # Otherwise propagate to children
+        if node.left_child and low <= node.left_child.right:
+            self._delete(node.left_child, interval)
+        if node.right_child and high >= node.right_child.left:
+            self._delete(node.right_child, interval)
+
+
     def _insert(self, node, interval):
         low, high, data = interval
         

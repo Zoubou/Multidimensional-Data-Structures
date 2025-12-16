@@ -76,83 +76,77 @@ class IntervalTree:
                 stack.append(node.right)
 
         return result
-
-    # ---------------------------------------------------------------
-    # INSERT A NEW INTERVAL INTO THE TREE
-    # ---------------------------------------------------------------
+    
     def insert(self, interval):
+        """Insert a new interval into the interval tree."""
+        self.root = self._insert(self.root, interval)
 
-        def insert_rec(node, interval):
-            # Base case: empty spot → create new node
-            if not node:
-                return Node(interval)
 
-            # BST insert using interval.low as the key
-            if interval.low < node.interval.low:
-                node.left = insert_rec(node.left, interval)
-            else:
-                node.right = insert_rec(node.right, interval)
+    def _insert(self, node, interval):
+        if node is None:
+            return Node(interval)
 
-            # Recompute max after insertion
-            left_max = node.left.max if node.left else float('-inf')
-            right_max = node.right.max if node.right else float('-inf')
-            node.max = max(node.interval.high, left_max, right_max)
+        # BST insert based on low endpoint
+        if interval.low < node.interval.low:
+            node.left = self._insert(node.left, interval)
+        else:
+            node.right = self._insert(node.right, interval)
 
-            return node
+        # Update max value
+        node.max = max(
+            node.interval.high,
+            node.left.max if node.left else float("-inf"),
+            node.right.max if node.right else float("-inf"),
+        )
 
-        self.root = insert_rec(self.root, interval)
-        
-    # ---------------------------------------------------------------
-    # DELETE AN INTERVAL FROM THE TREE (by low & high)
-    # ---------------------------------------------------------------
+        return node
+    
     def delete(self, interval):
+        """Delete an interval from the interval tree."""
+        self.root = self._delete(self.root, interval)
 
-        def delete_rec(node, interval):
-            if not node:
-                return None
+    def _delete(self, node, interval):
+        if node is None:
+            return None
 
-            # BST traversal by low endpoint
-            if interval.low < node.interval.low:
-                node.left = delete_rec(node.left, interval)
+        # Traverse BST
+        if interval.low < node.interval.low:
+            node.left = self._delete(node.left, interval)
 
-            elif interval.low > node.interval.low:
-                node.right = delete_rec(node.right, interval)
+        elif interval.low > node.interval.low:
+            node.right = self._delete(node.right, interval)
+
+        else:
+            # Found candidate node — verify exact interval
+            if node.interval.low == interval.low and node.interval.high == interval.high:
+
+                # Case 1: no children
+                if node.left is None and node.right is None:
+                    return None
+
+                # Case 2: one child
+                if node.left is None:
+                    return node.right
+                if node.right is None:
+                    return node.left
+
+                # Case 3: two children
+                # Replace with inorder successor (min of right subtree)
+                successor = self._min_node(node.right)
+                node.interval = successor.interval
+                node.right = self._delete(node.right, successor.interval)
 
             else:
-                # low matches → now confirm same interval
-                if node.interval.low == interval.low and node.interval.high == interval.high:
-                    
-                    # ---------- CASE 1: NO CHILD ----------
-                    if not node.left and not node.right:
-                        return None
+                # Same low, different interval — go right
+                node.right = self._delete(node.right, interval)
 
-                    # ---------- CASE 2: ONE CHILD ----------
-                    if not node.left:
-                        return node.right
-                    if not node.right:
-                        return node.left
+        # Update max after deletion
+        node.max = max(
+            node.interval.high,
+            node.left.max if node.left else float("-inf"),
+            node.right.max if node.right else float("-inf"),
+        )
 
-                    # ---------- CASE 3: TWO CHILDREN ----------
-                    # Find inorder successor (smallest in right subtree)
-                    successor = node.right
-                    while successor.left:
-                        successor = successor.left
-                    
-                    # Replace current node's interval with successor's
-                    node.interval = successor.interval
+        return node
 
-                    # Delete successor recursively
-                    node.right = delete_rec(node.right, successor.interval)
 
-                else:
-                    # same low but different interval → treat as right child
-                    node.right = delete_rec(node.right, interval)
-
-            # After deletion, update max values
-            left_max = node.left.max if node.left else float("-inf")
-            right_max = node.right.max if node.right else float("-inf")
-            node.max = max(node.interval.high, left_max, right_max)
-
-            return node
-
-        self.root = delete_rec(self.root, interval)
