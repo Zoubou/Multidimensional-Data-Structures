@@ -33,7 +33,7 @@ def generate_intervals_from_segments(gdf):
 # -------------------------------------------------------------
 def main():
     # Load your shapefile
-    file_path = 'HydroRIVERS_v10_gr.shp'
+    file_path = 'dataset/HydroRIVERS_v10_gr.shp'
     print("Loading shapefile...")
     rivers_gdf = gpd.read_file(file_path)
 
@@ -75,7 +75,7 @@ def main():
     print("Inserted:", new_interval)
 
     # Now query around it to verify it exists
-    test_query = Interval(120.0, 130.0)
+    test_query = Interval(55.0, 65.0)
     res2 = tree.interval_query(test_query)
     print("Query after insertion:", res2[:5])
 

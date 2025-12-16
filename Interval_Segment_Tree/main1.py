@@ -32,7 +32,7 @@ def generate_intervals_from_segments(gdf):
 # MAIN EXECUTION
 # -------------------------------------------------------------
 def main():
-    file_path = "HydroRIVERS_v10_gr.shp"
+    file_path = "dataset/HydroRIVERS_v10_gr.shp"
     print("Loading shapefile...")
     rivers_gdf = gpd.read_file(file_path)
 
@@ -58,7 +58,7 @@ def main():
     # Perform a stabbing query:
     # “Which river intervals contain x = some_value?”
     # ---------------------------------------------------------
-    query_x = -25.0
+    query_x = -20.0
     print(f"\nStabbing query at x = {query_x}")
 
     start = time.time()
