@@ -65,30 +65,49 @@ def main():
     print("First 10 results:", res[:10])
     print(f"Query time: {end - start:.6f} seconds")
 
-    #Testing Insertion
+        # ---------------------------------------------------------
+    # TEST INSERT
+    # ---------------------------------------------------------
+    test_interval = Interval(-25.0, -10.0, "TEST_INTERVAL")
+    print("\nInserting test interval:", test_interval)
 
-    print("\nTesting insertion...")
+    start = time.time()
+    tree.insert(test_interval)
+    end = time.time()
+    print(f"Insert time: {end - start:.6f} seconds")
 
-    new_interval = Interval(100.0, 150.0)
-    tree.insert(new_interval)
+    # Query again to verify insert
+    start = time.time()
+    res_after_insert = tree.interval_query(query)
+    end = time.time()
 
-    print("Inserted:", new_interval)
+    print(f"After insert: {len(res_after_insert)} intervals")
+    print("Test interval present:", test_interval in res_after_insert)
+    print("Only test interval:",
+      [iv for iv in res_after_insert if iv == test_interval])
+    print(f"Query time: {end - start:.6f} seconds")
 
-    # Now query around it to verify it exists
-    test_query = Interval(55.0, 65.0)
-    res2 = tree.interval_query(test_query)
-    print("Query after insertion:", res2[:5])
+    # ---------------------------------------------------------
+    # TEST DELETE
+    # ---------------------------------------------------------
+    print("\nDeleting test interval:", test_interval)
 
-    #Testing Deletion
+    start = time.time()
+    tree.delete(test_interval)
+    end = time.time()
+    print(f"Delete time: {end - start:.6f} seconds")
 
-    print("\nTesting deletion...")
+    # Query again to verify delete
+    start = time.time()
+    res_after_delete = tree.interval_query(query)
+    end = time.time()
 
-    to_delete = Interval(-25.696, -25.631)
-    tree.delete(to_delete)
+    print(f"After delete: {len(res_after_delete)} intervals")
+    print("Test interval present:", test_interval in res_after_delete)
+    print("Only test interval:",
+      [iv for iv in res_after_delete if iv == test_interval])
+    print(f"Query time: {end - start:.6f} seconds")
 
-    res_after_delete = tree.interval_query(Interval(-30, -20))
-    print("Query after deletion:", res_after_delete[:5])
-    print("After delete:", to_delete, "found?" , to_delete in res_after_delete)
 
 
 if __name__ == "__main__":

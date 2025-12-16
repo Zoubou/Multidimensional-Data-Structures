@@ -70,5 +70,38 @@ def main():
     print(f"Query time: {end - start:.6f} seconds")
 
 
+    # ---------------------------------------------------------
+    # TEST INSERT
+    # ---------------------------------------------------------
+    test_interval = (-25.0, -10.0, "TEST_INTERVAL")
+    print("\nInserting test interval:", test_interval)
+    tree._insert(tree.root, test_interval)
+
+    start = time.time()
+    result_after_insert = tree.stabbing_query(query_x)
+    end = time.time()
+
+    print(f"After insert: {len(result_after_insert)} intervals")
+    print("Test interval present:",
+          test_interval in result_after_insert)
+    print("First 10 results:", result_after_insert[:10])
+    print(f"Query time: {end - start:.6f} seconds")
+
+    # ---------------------------------------------------------
+    # TEST DELETE
+    # ---------------------------------------------------------
+    print("\nDeleting test interval:", test_interval)
+    tree.delete(test_interval)
+
+    start = time.time()
+    result_after_delete = tree.stabbing_query(query_x)
+    end = time.time()
+
+    print(f"After delete: {len(result_after_delete)} intervals")
+    print("Test interval present:", test_interval in result_after_delete)
+    print("First 10 results:", result_after_delete[:10])
+    print(f"Query time: {end - start:.6f} seconds")
+
+
 if __name__ == "__main__":
     main()
