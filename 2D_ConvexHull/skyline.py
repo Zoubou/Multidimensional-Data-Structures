@@ -3,24 +3,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def compute_skyline(pts):
-    # sort: accending budget, descending popularity
+    # sort: ascending budget, descending popularity
     sorted_indices = np.lexsort((-pts[:, 1], pts[:, 0]))
     sorted_pts = pts[sorted_indices]
     
-    skyline = []
+    skyline_indices = []
     max_popularity_so_far = -1.0
-    for p in sorted_pts:
+    for i, p in enumerate(sorted_pts):
         if p[1] > max_popularity_so_far:
-            skyline.append(p)
+            skyline_indices.append(sorted_indices[i])
             max_popularity_so_far = p[1]
-    return np.array(skyline)
+    return skyline_indices
 
 if __name__ == "__main__":
     df = pd.read_excel('data_movies_clean.xlsx')
-    points = df[(df['budget'] > 0) & (df['popularity'] > 0)][['budget', 'popularity']].dropna().values
+    filtered_df = df[(df['budget'] > 0) & (df['popularity'] > 0)].dropna()
+    points = filtered_df[['budget', 'popularity']].values
     
-    skyline_pts = compute_skyline(points)
+    skyline_indices = compute_skyline(points)
+    skyline_pts = points[skyline_indices]
+    skyline_movies = filtered_df.iloc[skyline_indices]
+    
     print(f"Skyline has {len(skyline_pts)} optimal points.")
+    print("Skyline points (Budget, Popularity):")
+    for i, pt in enumerate(skyline_pts):
+        print(f"  Point {i+1}: Budget={pt[0]:.2f}, Popularity={pt[1]:.2f}")
+    
+    print("\nCorresponding Movie IDs:")
+    for i, movie_id in enumerate(skyline_movies['id']):
+        print(f"  Point {i+1}: ID={movie_id}")
     
     plt.figure(figsize=(10, 6))
     plt.scatter(points[:, 0], points[:, 1], s=1, color='gray', alpha=0.3, label='Movies Data')
