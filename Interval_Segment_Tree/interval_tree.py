@@ -48,6 +48,7 @@ class IntervalTree:
 
         self.root = build_balanced(intervals)
 
+
     # -------------------------------------------------------------------
     # INTERVAL QUERY: return all intervals overlapping with Q
     # -------------------------------------------------------------------
@@ -77,6 +78,7 @@ class IntervalTree:
 
         return result
     
+
     def insert(self, interval):
         """Insert a new interval into the interval tree."""
         self.root = self._insert(self.root, interval)
@@ -100,9 +102,11 @@ class IntervalTree:
 
         return node
     
+
     def delete(self, interval):
         """Delete an interval from the interval tree."""
         self.root = self._delete(self.root, interval)
+
 
     def _delete(self, node, interval):
         if node is None:
