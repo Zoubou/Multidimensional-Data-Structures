@@ -2,7 +2,7 @@ class Interval:
     def __init__(self, low, high, data=None):
         self.low = low
         self.high = high
-        self.data = data  # optional: store river name etc.
+        self.data = data 
 
     def overlaps(self, other):
         return self.low <= other.high and other.low <= self.high
@@ -86,7 +86,6 @@ class IntervalTree:
         if node is None:
             return Node(interval)
 
-        # BST insert based on low endpoint
         if interval.low < node.interval.low:
             node.left = self._insert(node.left, interval)
         else:
